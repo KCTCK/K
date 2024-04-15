@@ -1,0 +1,16 @@
+{ 
+"classes": [
+{ "type_name": "TVBox","type_id": "TVBox" },
+{ "type_name": "音乐","type_id": "音乐" }, 
+{ "type_name": "巧虎","type_id": "巧虎" }, 
+{ "type_name": "Json&Jar", "type_id": "json&jar" },
+{ "type_name": "Alist", "type_id": "Alist" },  
+{ "type_name": "Office", "type_id": "Office" },
+{ "type_name": "Webdav", "type_id": "WebDav" }, 
+{ "type_name": "Photoshop", "type_id": "Photoshop" }, 
+{ "type_name": "爬虫", "type_id": "爬虫" }, 
+{ "type_name": "脱壳", "type_id": "脱壳" },
+{ "type_name": "文件传输", "type_id": "电视文件传输" },  
+{ "type_name": "MT管理器", "type_id": "MT管理器" }, 
+{ "type_name": "NP管理器", "type_id": "NP管理器" }, 
+{ "type_name": "Q群:523362652", "type_id": "免费资源网站分享" }]}
