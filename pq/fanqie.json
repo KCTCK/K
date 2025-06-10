@@ -1,0 +1,15 @@
+        {
+            "请求头": "手机",
+            "主页url": "https://www.yirenmeng.com",
+            "数组": "",
+            "标题": "title=\"&&\"",
+            "副标题": "class=\"module-info-item\">&&</div>",
+            "链接": "",
+            "简介": "",
+            "线路数组": "class=\"module-tab-item tab-item\"&&</div>",
+            "线路标题": "坤哥+<span>&&</small>",
+            "搜索副标题":"<span class=\"pic-text text-right\">&&</span>",
+            "跳转解析": "默认$https://jx.shipinbofang.net:55666/player/jiexi.php?code=5566jiexi&if=1&url=",
+            "分类url": "https://www.yirenmeng.com/vodshow/{cateId}-{area}-{by}-{class}-----{catePg}---{year}/[https://www.yirenmeng.com/vodtype/{cateId}/];;rc",
+            "分类":"电影$dianying#电视剧$dsj#综艺$zongyi#动漫$dongman#4K$4kdianying"
+        }
