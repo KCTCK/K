@@ -1,3 +1,210 @@
+// 百万IP池生成器
+globalThis.generateMillionIPs = function() {
+    const ipPool = [];
+
+    // 生成A类地址段 (1.0.0.0 - 126.255.255.255)
+    for (let a = 1; a <= 126; a++) {
+        if (a === 10 || a === 127) continue; // 跳过私有地址和回环
+        // 每个A类段随机选择部分B类地址
+        if (Math.random() < 0.15) {
+            for (let b = 0; b <= 255; b++) {
+                // 每个B类段随机选择部分C类地址
+                if (Math.random() < 0.02) {
+                    for (let c = 0; c <= 255; c++) {
+                        // 每个C类段随机选择部分D类地址
+                        if (Math.random() < 0.01) {
+                            const ip = `${a}.${b}.${c}.${Math.floor(Math.random() * 254) + 1}`;
+                            const port = [80, 8080, 3128, 443, 8443, 8888, 9000][Math.floor(Math.random() * 7)];
+                            ipPool.push(`http://${ip}:${port}`);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // 生成B类地址段 (128.0.0.0 - 191.255.255.255)
+    for (let a = 128; a <= 191; a++) {
+        for (let b = 0; b <= 255; b++) {
+            if (a === 172 && b >= 16 && b <= 31) continue; // 跳过私有地址
+            if (Math.random() < 0.08) {
+                for (let c = 0; c <= 255; c++) {
+                    if (Math.random() < 0.01) {
+                        const ip = `${a}.${b}.${c}.${Math.floor(Math.random() * 254) + 1}`;
+                        const port = [80, 8080, 3128, 443, 8443, 8888, 9000][Math.floor(Math.random() * 7)];
+                        ipPool.push(`http://${ip}:${port}`);
+                    }
+                }
+            }
+        }
+    }
+    
+    // 生成C类地址段 (192.0.0.0 - 223.255.255.255)
+    for (let a = 192; a <= 223; a++) {
+        for (let b = 0; b <= 255; b++) {
+            if (a === 192 && b === 168) continue; // 跳过私有地址
+            if (a === 198 && b >= 18 && b <= 19) continue; // 跳过测试地址
+            if (Math.random() < 0.05) {
+                for (let c = 0; c <= 255; c++) {
+                    if (Math.random() < 0.005) {
+                        const ip = `${a}.${b}.${c}.${Math.floor(Math.random() * 254) + 1}`;
+                        const port = [80, 8080, 3128, 443, 8443, 8888, 9000][Math.floor(Math.random() * 7)];
+                        ipPool.push(`http://${ip}:${port}`);
+                    }
+                }
+            }
+        }
+    }
+    
+    console.log(`生成了 ${ipPool.length} 个随机IP地址`);
+    return ipPool;
+};
+
+// 动态IP池管理器
+globalThis.dynamicIPPool = {
+    ipPool: [],
+    lastRefresh: 0,
+    refreshInterval: 3600000, // 1小时刷新一次
+    
+    getIPs: function() {
+        const now = Date.now();
+        if (this.ipPool.length === 0 || now - this.lastRefresh > this.refreshInterval) {
+            console.log("刷新IP池...");
+            this.ipPool = generateMillionIPs();
+            this.lastRefresh = now;
+        }
+        return this.ipPool;
+    },
+    
+    getRandomIP: function() {
+        const pool = this.getIPs();
+        return pool[Math.floor(Math.random() * pool.length)];
+    },
+    
+    // 获取一批不同的IP
+    getBatchIPs: function(count) {
+        const pool = this.getIPs();
+        const selected = [];
+        const usedIndices = new Set();
+        
+        for (let i = 0; i < count && i < pool.length; i++) {
+            let index;
+            do {
+                index = Math.floor(Math.random() * pool.length);
+            } while (usedIndices.has(index) && usedIndices.size < pool.length);
+            
+            usedIndices.add(index);
+            selected.push(pool[index]);
+        }
+        
+        return selected;
+    }
+};
+
+// 增强的代理IP池（包含静态和动态IP）
+globalThis.proxyPool = [
+    'http://120.46.190.255:8080',
+    'http://112.74.105.128:8080', 
+    'http://183.247.211.43:8080',
+    'http://117.85.105.170:8080',
+    'http://121.232.148.241:8080',
+    'http://118.212.104.207:8080',
+    'http://117.87.178.123:8080',
+    'http://183.166.102.23:8080',
+    'http://114.239.1.155:8080',
+    'http://123.163.117.98:8080'
+];
+
+// 解析接口池（整合所有解析接口，去重，包含原lazy里的所有接口）
+globalThis.parseApiPool = [
+    "https://niubi.69mini.com/jsonapi/?url=",
+    ""
+];
+
+
+// 智能获取随机代理（优先动态IP，失败后使用静态IP）
+globalThis.getRandomProxy = function() {
+    // 80%概率使用动态IP，20%概率使用静态IP
+    if (Math.random() < 0.8) {
+        return dynamicIPPool.getRandomIP();
+    } else {
+        return proxyPool[Math.floor(Math.random() * proxyPool.length)];
+    }
+};
+
+// 获取解析接口
+globalThis.getParseApi = function() {
+    return parseApiPool[Math.floor(Math.random() * parseApiPool.length)];
+};
+
+// 增强的带代理请求函数
+globalThis.requestWithProxy = function(url, options, parseJson) {
+    const maxRetries = 3;
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+            let proxyUrl = getRandomProxy();
+            console.log(`第${attempt + 1}次尝试使用代理: ${proxyUrl}`);
+            
+            // 生成随机User-Agent
+            const userAgents = [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1',
+                'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.210 Mobile Safari/537.36'
+            ];
+            const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+            
+            // 生成随机IP地址用于伪造头信息
+            const fakeIP = generateFakeIP();
+            
+            const requestOptions = {
+                ...options,
+                proxy: proxyUrl,
+                timeout: 10000,
+                headers: {
+                    ...options?.headers,
+                    'User-Agent': randomUserAgent,
+                    'X-Forwarded-For': fakeIP,
+                    'X-Real-IP': fakeIP,
+                    'CF-Connecting-IP': fakeIP,
+                    'Client-IP': fakeIP
+                }
+            };
+            
+            let result = request(url, requestOptions, parseJson);
+            console.log(`第${attempt + 1}次代理请求成功`);
+            return result;
+        } catch (e) {
+            console.log(`第${attempt + 1}次代理请求失败: ${e.message}`);
+            if (attempt === maxRetries - 1) {
+                console.log("所有代理尝试失败，使用直连");
+                // 所有代理失败时使用直连
+                return request(url, options, parseJson);
+            }
+        }
+    }
+};
+
+// 生成伪造IP地址的函数
+globalThis.generateFakeIP = function() {
+    // 避免私有地址段
+    let a, b, c, d;
+    do {
+        a = Math.floor(Math.random() * 223) + 1;
+        b = Math.floor(Math.random() * 256);
+        c = Math.floor(Math.random() * 256);
+        d = Math.floor(Math.random() * 254) + 1;
+    } while (
+        a === 10 || 
+        (a === 172 && b >= 16 && b <= 31) ||
+        (a === 192 && b === 168) ||
+        a === 127
+    );
+    
+    return `${a}.${b}.${c}.${d}`;
+};
 globalThis.vod1 = function(ids) {
     let html1 = request('https://pbaccess.video.qq.com/trpc.videosearch.mobile_search.MultiTerminalSearch/MbSearch?vplatform=2', {
         body: {
