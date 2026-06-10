@@ -1,5 +1,5 @@
 { 
-"classes": [
+"class": [
 { "type_name": "TVBox","type_id": "TVBox" },
 { "type_name": "音乐","type_id": "音乐" }, 
 { "type_name": "巧虎","type_id": "巧虎" }, 
